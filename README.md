@@ -2,6 +2,10 @@
 
 Follows guide at https://jamielinux.com/docs/openssl-certificate-authority/index.html
 
+The create-root-pair-* and create-intermediate-pair-* tasks set up the Certificate Authority.
+
+The ca-* tasks use the Certificate Authority (CA) to create certificates for use in web servers etc.
+
 ## Tasks
 
 ### create-root-pair-prepare-directory
@@ -152,4 +156,70 @@ cat intermediate/certs/intermediate.cert.pem \
 chmod 444 intermediate/certs/ca-chain.cert.pem
 ```
 
+### ca-create-key
 
+Creates a key for the domain. This is typically done by the requestor of the certificate. The requestor then creates a Certificate Signing Request (CSR) for the CA to sign.
+
+Dir: ca/intermediate
+Inputs: DOMAIN
+
+https://jamielinux.com/docs/openssl-certificate-authority/sign-server-and-client-certificates.html#create-a-key
+
+```bash
+cat /dev/random | head -c 10240 | shasum | head -c 40 > "$DOMAIN_username_password.txt"
+openssl genrsa -aes256 \
+      -passout file:"$DOMAIN_username_password.txt" \
+      -out private/$DOMAIN.key.pem 2048
+chmod 400 private/$DOMAIN.key.pem
+```
+
+### ca-create-csr
+
+https://jamielinux.com/docs/openssl-certificate-authority/sign-server-and-client-certificates.html#create-a-certificate
+
+Dir: ca/intermediate
+Inputs: DOMAIN
+
+```bash
+openssl req -config ./openssl.cnf \
+      -subj "/CN=$DOMAIN" \
+      -passin file:"$DOMAIN_username_password.txt" \
+      -key private/$DOMAIN.key.pem \
+      -new -sha256 \
+      -out csr/$DOMAIN.csr.pem
+```
+
+### ca-sign-csr
+
+https://jamielinux.com/docs/openssl-certificate-authority/sign-server-and-client-certificates.html#create-a-certificate
+
+Dir: ca/intermediate
+Inputs: DOMAIN
+
+```bash
+openssl ca -config ./openssl.cnf \
+      -batch \
+      -extensions server_cert -days 375 -notext -md sha256 \
+      -passin file:../intermediate_username_password.txt \
+      -in csr/$DOMAIN.csr.pem \
+      -out certs/$DOMAIN.cert.pem
+chmod 444 certs/$DOMAIN.cert.pem
+```
+
+### ca-view-certs
+
+Dir: ca/intermediate
+
+```bash
+cat index.txt
+```
+
+### ca-verify-cert
+
+Dir: ca/intermediate
+Inputs: DOMAIN
+
+```bash
+openssl verify -CAfile certs/ca-chain.cert.pem \
+      certs/$DOMAIN.cert.pem
+```
