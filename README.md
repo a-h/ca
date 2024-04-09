@@ -223,3 +223,20 @@ Inputs: DOMAIN
 openssl verify -CAfile certs/ca-chain.cert.pem \
       certs/$DOMAIN.cert.pem
 ```
+
+### ca-deploy-cert
+
+https://jamielinux.com/docs/openssl-certificate-authority/sign-server-and-client-certificates.html#deploy-the-certificate
+
+Dir: ca/intermediate
+Inputs: DOMAIN
+
+```bash
+echo -e "Provide the following to the requestor:\n\n" \
+ "  certs/ca-chain.cert.pem\n" \
+ "  certs/$DOMAIN.cert.pem\n" \
+ "  private/$DOMAIN.key.pem\n" \
+ "\n" \
+ "In the case that the CSR came from a 3rd party, you won't have the private key, they have that themselves, so you can just" \
+ "provide the two cert files."
+```
