@@ -166,9 +166,7 @@ Inputs: DOMAIN
 https://jamielinux.com/docs/openssl-certificate-authority/sign-server-and-client-certificates.html#create-a-key
 
 ```bash
-cat /dev/random | head -c 10240 | shasum | head -c 40 > "$DOMAIN_username_password.txt"
-openssl genrsa -aes256 \
-      -passout file:"$DOMAIN_username_password.txt" \
+openssl genrsa \
       -out private/$DOMAIN.key.pem 2048
 chmod 400 private/$DOMAIN.key.pem
 ```
@@ -183,7 +181,6 @@ Inputs: DOMAIN
 ```bash
 openssl req -config ./openssl.cnf \
       -subj "/CN=$DOMAIN" \
-      -passin file:"$DOMAIN_username_password.txt" \
       -key private/$DOMAIN.key.pem \
       -new -sha256 \
       -out csr/$DOMAIN.csr.pem
@@ -239,4 +236,14 @@ echo -e "Provide the following to the requestor:\n\n" \
  "\n" \
  "In the case that the CSR came from a 3rd party, you won't have the private key, they have that themselves, so you can just" \
  "provide the two cert files."
+```
+
+### serve-with-test-cert
+
+You will need to update your `/etc/hosts` file to point the domain to localhost.
+
+Inputs: DOMAIN
+
+```bash
+serve -crt="ca/intermediate/certs/$DOMAIN.cert.pem" -key="ca/intermediate/private/$DOMAIN.key.pem" -dir=www -addr=localhost:9090
 ```
