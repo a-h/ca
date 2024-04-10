@@ -237,8 +237,16 @@ echo -e "Provide the following to the requestor:\n\n" \
  "  certs/$DOMAIN.cert.pem\n" \
  "  private/$DOMAIN.key.pem\n" \
  "\n" \
- "In the case that the CSR came from a 3rd party, you won't have the private key, they have that themselves, so you can just" \
- "provide the two cert files."
+ "In the case that the CSR came from a 3rd party, you won't have the private key, they have that themselves, so you can just\n" \
+ "provide the two cert files.\n" \
+ "\n" \
+ " - The certs/ca-chain.cert.pem file is the chain of trust that should be installed in the trust store of the client.\n" \
+ "   - This needs to be installed in the operating system trust store for the cert to be trusted by browser clients.\n" \
+ " - The certs/$DOMAIN.cert.pem file is the public cert that can be shared with anyone who wants to connect to the server.\n" \
+ "   - This is the file that should be used by non-browser clients to customise their cert pool (see get/main.go for an example).\n" \
+ "   - This is also required by web servers to start up TLS.\n" \
+ " - The private/$DOMAIN.key.pem file is the private key that should be used by servers to start up TLS.\n" \
+ "   - This should ONLY be shared with the server that will be using the cert, and NOT given to clients.\n" \
 ```
 
 ### serve-with-test-cert
@@ -259,4 +267,14 @@ Inputs: DOMAIN
 
 ```bash
 go run ./get/main.go -crt="ca/intermediate/certs/$DOMAIN.cert.pem" -url="https://$DOMAIN:8443"
+```
+
+### test-ssl
+
+You will need to update your `/etc/hosts` file to point the domain to localhost.
+
+Inputs: DOMAIN
+
+```bash
+testssl https://$DOMAIN:8443
 ```
