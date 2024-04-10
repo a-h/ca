@@ -2,9 +2,10 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
     serve.url = "github:a-h/serve";
+    xc.url = "github:joerdav/xc";
   };
 
-  outputs = { nixpkgs, serve, ... }:
+  outputs = { nixpkgs, serve, xc, ... }:
     let
       pkgsForSystem = system: import nixpkgs {
         inherit system;
@@ -26,6 +27,7 @@
             pkgs.openssl
             serve.outputs.packages.${system}.default
             pkgs.testssl # Use to test the server.
+            xc.outputs.packages.${system}.xc
           ];
         });
     };
