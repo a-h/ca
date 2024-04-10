@@ -45,13 +45,13 @@ openssl genrsa -aes256 -passout file:ca_username_password.txt -out private/ca.ke
 
 Dir: ca
 
-Note, change "a-h.github.com" to the domain you want to use.
+Note, change the subject CN to the domain you want to use.
 
 https://jamielinux.com/docs/openssl-certificate-authority/create-the-root-pair.html#create-the-root-certificate
 
 ```bash
 openssl req -config openssl.cnf \
-      -subj "/C=GB/ST=London/L=London/O=Organisation/OU=IT Department/CN=a-h.github.com" \
+      -subj "/C=/ST=/L=/O=/OU=/CN=root" \
       -passin file:ca_username_password.txt \
       -key private/ca.key.pem \
       -new -x509 -days 7300 -sha256 -extensions v3_ca \
@@ -89,7 +89,7 @@ cp intermediate.cnf ca/intermediate/openssl.cnf
 
 Dir: ca
 
-Note, change "a-h.github.com Intermediate CA" to the domain you want to use.
+Note, change the subject CN to the domain you want to use.
 
 https://jamielinux.com/docs/openssl-certificate-authority/create-the-intermediate-pair.html#create-the-intermediate-key
 
@@ -105,13 +105,13 @@ chmod 400 intermediate/private/intermediate.key.pem
 
 Dir: ca
 
-Note, change "a-h.github.com Intermediate CA" to the domain you want to use.
+Note, change the subject CN to the domain you want to use.
 
 https://jamielinux.com/docs/openssl-certificate-authority/create-the-intermediate-pair.html#create-the-intermediate-certificate
 
 ```bash
 openssl req -config intermediate/openssl.cnf -new -sha256 \
-      -subj "/C=GB/ST=London/L=London/O=Organisation/OU=IT Department/CN=a-h.github.com Intermediate CA" \
+      -subj "/C=/ST=/L=/O=/OU=/CN=intermediate" \
       -passin file:intermediate_username_password.txt \
       -key intermediate/private/intermediate.key.pem \
       -out intermediate/csr/intermediate.csr.pem
@@ -276,5 +276,5 @@ You will need to update your `/etc/hosts` file to point the domain to localhost.
 Inputs: DOMAIN
 
 ```bash
-testssl https://$DOMAIN:8443
+testssl.sh https://$DOMAIN:8443
 ```

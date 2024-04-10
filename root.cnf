@@ -32,7 +32,7 @@ name_opt          = ca_default
 cert_opt          = ca_default
 default_days      = 375
 preserve          = no
-policy            = policy_strict
+policy            = policy_loose
 
 [ policy_strict ]
 # The root CA should only sign intermediate certificates that match.
@@ -78,8 +78,8 @@ commonName                      = Common Name
 emailAddress                    = Email Address
 
 # Optionally, specify some defaults.
-countryName_default             = GB
-stateOrProvinceName_default     = England
+countryName_default             = 
+stateOrProvinceName_default     = 
 localityName_default            =
 0.organizationName_default      =
 organizationalUnitName_default  =
