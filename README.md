@@ -181,6 +181,7 @@ Inputs: DOMAIN
 ```bash
 openssl req -config ./openssl.cnf \
       -subj "/CN=$DOMAIN" \
+      -addext "subjectAltName=DNS:$DOMAIN" \
       -key private/$DOMAIN.key.pem \
       -new -sha256 \
       -out csr/$DOMAIN.csr.pem
@@ -196,7 +197,8 @@ Inputs: DOMAIN
 ```bash
 openssl ca -config ./openssl.cnf \
       -batch \
-      -extensions server_cert -days 375 -notext -md sha256 \
+      -extensions server_cert \
+      -days 375 -notext -md sha256 \
       -passin file:../intermediate_username_password.txt \
       -in csr/$DOMAIN.csr.pem \
       -out certs/$DOMAIN.cert.pem
@@ -245,5 +247,15 @@ You will need to update your `/etc/hosts` file to point the domain to localhost.
 Inputs: DOMAIN
 
 ```bash
-serve -crt="ca/intermediate/certs/$DOMAIN.cert.pem" -key="ca/intermediate/private/$DOMAIN.key.pem" -dir=www -addr=localhost:9090
+serve -crt="ca/intermediate/certs/$DOMAIN.cert.pem" -key="ca/intermediate/private/$DOMAIN.key.pem" -dir=www -addr=localhost:8443
+```
+
+### request-with-test-cert
+
+You will need to update your `/etc/hosts` file to point the domain to localhost.
+
+Inputs: DOMAIN
+
+```bash
+go run ./get/main.go -crt="ca/intermediate/certs/$DOMAIN.cert.pem" -url="https://$DOMAIN:8443"
 ```
