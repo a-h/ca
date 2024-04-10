@@ -160,14 +160,15 @@ chmod 444 intermediate/certs/ca-chain.cert.pem
 
 Creates a key for the domain. This is typically done by the requestor of the certificate. The requestor then creates a Certificate Signing Request (CSR) for the CA to sign.
 
+The instructions in the guide use RSA, but I've migrated to the more modern x25519 elliptic curve.
+
 Dir: ca/intermediate
 Inputs: DOMAIN
 
 https://jamielinux.com/docs/openssl-certificate-authority/sign-server-and-client-certificates.html#create-a-key
 
 ```bash
-openssl genrsa \
-      -out private/$DOMAIN.key.pem 2048
+openssl ecparam -genkey -name secp384r1 -out private/$DOMAIN.key.pem
 chmod 400 private/$DOMAIN.key.pem
 ```
 
@@ -180,11 +181,11 @@ Inputs: DOMAIN
 
 ```bash
 openssl req -config ./openssl.cnf \
-      -subj "/CN=$DOMAIN" \
-      -addext "subjectAltName=DNS:$DOMAIN" \
+      -new \
       -key private/$DOMAIN.key.pem \
-      -new -sha256 \
-      -out csr/$DOMAIN.csr.pem
+      -out csr/$DOMAIN.csr.pem \
+      -subj "/CN=$DOMAIN" \
+      -addext "subjectAltName=DNS:$DOMAIN"
 ```
 
 ### ca-sign-csr
@@ -242,7 +243,7 @@ echo -e "Provide the following to the requestor:\n\n" \
 
 ### serve-with-test-cert
 
-You will need to update your `/etc/hosts` file to point the domain to localhost.
+You will need to update your `/etc/hosts` file to point the domain to localhost unless you've created a cert for localhost itself.
 
 Inputs: DOMAIN
 

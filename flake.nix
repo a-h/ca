@@ -25,6 +25,7 @@
           buildInputs = [
             pkgs.openssl
             serve.outputs.packages.${system}.default
+            pkgs.testssl # Use to test the server.
           ];
         });
     };
