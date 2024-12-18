@@ -160,7 +160,7 @@ chmod 444 intermediate/certs/ca-chain.cert.pem
 
 Creates a key for the domain. This is typically done by the requestor of the certificate. The requestor then creates a Certificate Signing Request (CSR) for the CA to sign.
 
-The instructions in the guide use RSA, but I've migrated to the more modern x25519 elliptic curve.
+The instructions in the guide use RSA, but I've migrated to the more modern ED25519 elliptic curve.
 
 Dir: ca/intermediate
 Inputs: DOMAIN
@@ -168,7 +168,7 @@ Inputs: DOMAIN
 https://jamielinux.com/docs/openssl-certificate-authority/sign-server-and-client-certificates.html#create-a-key
 
 ```bash
-openssl ecparam -genkey -name x25519 -out private/$DOMAIN.key.pem
+openssl genpkey -algorithm ED25519 -out private/$DOMAIN.key.pem
 chmod 400 private/$DOMAIN.key.pem
 ```
 
