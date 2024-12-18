@@ -37,7 +37,7 @@ This would normally be done on an air-gapped machine.
 https://jamielinux.com/docs/openssl-certificate-authority/create-the-root-pair.html#create-the-root-key
 
 ```bash
-cat /dev/random | head -c 10240 | shasum | head -c 40 > ca_username_password.txt
+cat /dev/random | head -c 10240 | sha256sum | head -c 40 > ca_username_password.txt
 openssl genrsa -aes256 -passout file:ca_username_password.txt -out private/ca.key.pem 4096
 ```
 
@@ -94,7 +94,7 @@ Note, change the subject CN to the domain you want to use.
 https://jamielinux.com/docs/openssl-certificate-authority/create-the-intermediate-pair.html#create-the-intermediate-key
 
 ```bash
-cat /dev/random | head -c 10240 | shasum | head -c 40 > intermediate_username_password.txt
+cat /dev/random | head -c 10240 | sha256sum | head -c 40 > intermediate_username_password.txt
 openssl genrsa -aes256 \
       -passout file:intermediate_username_password.txt \
       -out intermediate/private/intermediate.key.pem 4096
@@ -168,7 +168,7 @@ Inputs: DOMAIN
 https://jamielinux.com/docs/openssl-certificate-authority/sign-server-and-client-certificates.html#create-a-key
 
 ```bash
-openssl ecparam -genkey -name secp384r1 -out private/$DOMAIN.key.pem
+openssl ecparam -genkey -name x25519 -out private/$DOMAIN.key.pem
 chmod 400 private/$DOMAIN.key.pem
 ```
 
